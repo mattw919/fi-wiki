@@ -36,8 +36,9 @@
     </div>
     <a href="{{ url('/pages/recently-updated')  }}" class="text-muted block py-xs">{{ trans('common.view_all') }}</a>
 </div>
-
+@if(auth()->user())
 <div id="recent-activity" class="mb-xl">
     <h5>{{ trans('entities.recent_activity') }}</h5>
     @include('common.activity-list', ['activity' => $activity])
 </div>
+@endif
