@@ -44,11 +44,12 @@
             @endif
 
             @include('entities.view-toggle', ['view' => $view, 'type' => 'books'])
-
+            @if(auth()->user())
             <a href="{{ url('/tags') }}" class="icon-list-item">
                 <span>@icon('tag')</span>
                 <span>{{ trans('entities.tags_view_tags') }}</span>
             </a>
+            @endif
         </div>
     </div>
 

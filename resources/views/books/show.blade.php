@@ -66,6 +66,7 @@
 
 @stop
 
+@if(auth()->user())
 @section('right')
     <div class="mb-xl">
         <h5>{{ trans('common.details') }}</h5>
@@ -152,7 +153,23 @@
     </div>
 
 @stop
+@endif
 
+@section('custom-css')
+    @if(!auth()->user())
+        <style>
+            @media screen and (min-width: 1000px) {
+                .tri-layout-container {
+                    grid-template-columns: 1fr 4fr;
+                    grid-template-areas: "a b";
+                }
+            }
+            .page-content,#main-content{
+                max-width: none;
+            }
+        </style>
+    @endif
+@endsection
 @section('left')
 
     @include('entities.search-form', ['label' => trans('entities.books_search_this')])
@@ -170,7 +187,7 @@
         </div>
     @endif
 
-    @if(count($activity) > 0)
+    @if(auth()->user() && count($activity) > 0)
         <div id="recent-activity" class="mb-xl">
             <h5>{{ trans('entities.recent_activity') }}</h5>
             @include('common.activity-list', ['activity' => $activity])

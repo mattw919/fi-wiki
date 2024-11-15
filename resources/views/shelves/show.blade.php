@@ -68,6 +68,7 @@
 
 @stop
 
+@if(auth()->user())
 @section('left')
 
     @if($shelf->tags->count() > 0)
@@ -105,6 +106,7 @@
         </div>
     @endif
 @stop
+@endif
 
 @section('right')
     <div class="actions mb-xl">

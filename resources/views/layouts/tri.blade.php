@@ -4,6 +4,7 @@
 @section('content-components', 'tri-layout')
 
 @section('content')
+    @yield('custom-css')
 
     <div class="tri-layout-mobile-tabs print-hidden">
         <div class="grid half no-break no-gap">

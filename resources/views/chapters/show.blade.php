@@ -12,6 +12,21 @@
 
 @include('entities.body-tag-classes', ['entity' => $chapter])
 
+@section('custom-css')
+    @if(!auth()->user())
+        <style>
+            @media screen and (min-width: 1000px) {
+                .tri-layout-container {
+                    grid-template-columns: 1fr 4fr;
+                    grid-template-areas: "a b";
+                }
+            }
+            .page-content,#main-content{
+                max-width: none;
+            }
+        </style>
+    @endif
+@endsection
 @section('body')
 
     <div class="mb-m print-hidden">
@@ -62,6 +77,7 @@
 
 @stop
 
+@if(auth()->user())
 @section('right')
 
     <div class="mb-xl">
@@ -169,6 +185,7 @@
         </div>
     </div>
 @stop
+@endif
 
 @section('left')
 

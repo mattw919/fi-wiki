@@ -14,7 +14,7 @@
     </div>
 
     <div class="container" id="home-default">
-        <div class="grid third gap-x-xxl no-row-gap">
+        <div class="grid {{auth()->user() ? 'third':'half'}}  gap-x-xxl no-row-gap">
             <div>
                 @if(count($draftPages) > 0)
                     <div id="recent-drafts" class="card mb-xl">
@@ -66,6 +66,7 @@
                 </div>
             </div>
 
+            @if(auth()->user())
             <div>
                 <div id="recent-activity" class="card mb-xl">
                     <h3 class="card-title">{{ trans('entities.recent_activity') }}</h3>
@@ -74,7 +75,7 @@
                     </div>
                 </div>
             </div>
-
+            @endif
         </div>
     </div>
 
