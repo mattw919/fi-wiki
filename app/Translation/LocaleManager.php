@@ -76,8 +76,10 @@ class LocaleManager
     {
         $default = config('app.default_locale');
 
-        if ($user->isGuest() && config('app.auto_detect_locale')) {
-            return $this->autoDetectLocale(request(), $default);
+        if ($user->isGuest() && config('app.auto_detect_locale'))
+        {
+            return 'en_guest';
+//            return $this->autoDetectLocale(request(), $default);
         }
 
         return setting()->getUser($user, 'language', $default);
@@ -105,8 +107,10 @@ class LocaleManager
     {
         $availableLocales = $this->getAllAppLocales();
 
-        foreach ($request->getLanguages() as $lang) {
-            if (in_array($lang, $availableLocales)) {
+        foreach ($request->getLanguages() as $lang)
+        {
+            if (in_array($lang, $availableLocales))
+            {
                 return $lang;
             }
         }

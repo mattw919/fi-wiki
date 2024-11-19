@@ -7,23 +7,25 @@
             <span>@icon('books')</span>
             <span>{{ trans('entities.books') }}</span>
         </a>
-        <?php $breadcrumbCount++; ?>
+            <?php $breadcrumbCount++; ?>
     @endif
 
     {{-- Show top level shelves item --}}
     @if (count($crumbs) > 0 && ($crumbs[0] ?? null) instanceof  \BookStack\Entities\Models\Bookshelf)
-        <a href="{{  url('/shelves')  }}" class="text-bookshelf icon-list-item outline-hover">
-            <span>@icon('bookshelf')</span>
-            <span>{{ trans('entities.shelves') }}</span>
-        </a>
-        <?php $breadcrumbCount++; ?>
+        @if(auth()->user())
+            <a href="{{  url('/shelves')  }}" class="text-bookshelf icon-list-item outline-hover">
+                <span>@icon('bookshelf')</span>
+                <span>{{ trans('entities.shelves') }}</span>
+            </a>
+                <?php $breadcrumbCount++; ?>
+        @endif
     @endif
 
     @foreach($crumbs as $key => $crumb)
-        <?php $isEntity = ($crumb instanceof \BookStack\Entities\Models\Entity); ?>
+            <?php $isEntity = ($crumb instanceof \BookStack\Entities\Models\Entity); ?>
 
         @if (is_null($crumb))
-            <?php continue; ?>
+                <?php continue; ?>
         @endif
         @if ($breadcrumbCount !== 0 && !$isEntity)
             <div class="separator">@icon('chevron-right')</div>
@@ -49,6 +51,6 @@
                 </span>
             </a>
         @endif
-        <?php $breadcrumbCount++; ?>
+            <?php $breadcrumbCount++; ?>
     @endforeach
 </nav>

@@ -2,13 +2,17 @@
      class="book-tree mb-xl"
      aria-label="{{ trans('entities.books_navigation') }}">
 
-    <h5>{{ trans('entities.books_navigation') }}</h5>
+    @if(auth()->user())
+        <h5>{{ trans('entities.books_navigation') }}</h5>
+    @endif
 
     <ul class="sidebar-page-list mt-xs menu entity-list">
-        @if (userCan('view', $book))
-            <li class="list-item-book book">
-                @include('entities.list-item-basic', ['entity' => $book, 'classes' => ($current->matches($book)? 'selected' : '')])
-            </li>
+        @if(auth()->user())
+            @if (userCan('view', $book))
+                <li class="list-item-book book">
+                    @include('entities.list-item-basic', ['entity' => $book, 'classes' => ($current->matches($book)? 'selected' : '')])
+                </li>
+            @endif
         @endif
 
         @foreach($sidebarTree as $bookChild)

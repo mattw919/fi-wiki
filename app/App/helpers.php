@@ -1,9 +1,11 @@
 <?php
 
 use BookStack\App\Model;
+use BookStack\Entities\Models\Page;
 use BookStack\Permissions\PermissionApplicator;
 use BookStack\Settings\SettingService;
 use BookStack\Users\Models\User;
+use Illuminate\Support\Carbon;
 
 /**
  * Get the path to a versioned file.
@@ -127,4 +129,10 @@ function sortUrl(string $path, array $data, array $overrideData = []): string
     }
 
     return url($path . '?' . implode('&', $queryStringSections));
+}
+
+function getLastUpdated()
+{
+    $latestUpdatedAt = Page::latest('updated_at')->value('updated_at');
+    return $latestUpdatedAt ? Carbon::parse($latestUpdatedAt)->format('F j, Y, g:i A') : null;
 }

@@ -26,12 +26,12 @@ use Throwable;
 class BookController extends Controller
 {
     public function __construct(
-        protected ShelfContext $shelfContext,
-        protected BookRepo $bookRepo,
-        protected BookQueries $queries,
+        protected ShelfContext     $shelfContext,
+        protected BookRepo         $bookRepo,
+        protected BookQueries      $queries,
         protected BookshelfQueries $shelfQueries,
         protected ReferenceFetcher $referenceFetcher,
-    ) {
+    ){
     }
 
     /**
@@ -39,30 +39,30 @@ class BookController extends Controller
      */
     public function index(Request $request)
     {
-        $view = setting()->getForCurrentUser('books_view_type');
+        $view        = setting()->getForCurrentUser('books_view_type');
         $listOptions = SimpleListOptions::fromRequest($request, 'books')->withSortOptions([
-            'name' => trans('common.sort_name'),
+            'name'       => trans('common.sort_name'),
             'created_at' => trans('common.sort_created_at'),
             'updated_at' => trans('common.sort_updated_at'),
         ]);
 
-        $books = $this->queries->visibleForListWithCover()
+        $books   = $this->queries->visibleForListWithCover()
             ->orderBy($listOptions->getSort(), $listOptions->getOrder())
             ->paginate(18);
         $recents = $this->isSignedIn() ? $this->queries->recentlyViewedForCurrentUser()->take(4)->get() : false;
         $popular = $this->queries->popularForList()->take(4)->get();
-        $new = $this->queries->visibleForList()->orderBy('created_at', 'desc')->take(4)->get();
+        $new     = $this->queries->visibleForList()->orderBy('created_at', 'desc')->take(4)->get();
 
         $this->shelfContext->clearShelfContext();
 
         $this->setPageTitle(trans('entities.books'));
 
         return view('books.index', [
-            'books'   => $books,
-            'recents' => $recents,
-            'popular' => $popular,
-            'new'     => $new,
-            'view'    => $view,
+            'books'       => $books,
+            'recents'     => $recents,
+            'popular'     => $popular,
+            'new'         => $new,
+            'view'        => $view,
             'listOptions' => $listOptions,
         ]);
     }
@@ -75,7 +75,8 @@ class BookController extends Controller
         $this->checkPermission('book-create-all');
 
         $bookshelf = null;
-        if ($shelfSlug !== null) {
+        if ($shelfSlug !== null)
+        {
             $bookshelf = $this->shelfQueries->findVisibleBySlugOrFail($shelfSlug);
             $this->checkOwnablePermission('bookshelf-update', $bookshelf);
         }
@@ -105,14 +106,16 @@ class BookController extends Controller
         ]);
 
         $bookshelf = null;
-        if ($shelfSlug !== null) {
+        if ($shelfSlug !== null)
+        {
             $bookshelf = $this->shelfQueries->findVisibleBySlugOrFail($shelfSlug);
             $this->checkOwnablePermission('bookshelf-update', $bookshelf);
         }
 
         $book = $this->bookRepo->create($validated);
 
-        if ($bookshelf) {
+        if ($bookshelf)
+        {
             $bookshelf->appendBook($book);
             Activity::add(ActivityType::BOOKSHELF_UPDATE, $bookshelf);
         }
@@ -125,16 +128,28 @@ class BookController extends Controller
      */
     public function show(Request $request, ActivityQueries $activities, string $slug)
     {
-        $book = $this->queries->findVisibleBySlugOrFail($slug);
+        $book         = $this->queries->findVisibleBySlugOrFail($slug);
         $bookChildren = (new BookContents($book))->getTree(true);
+
         $bookParentShelves = $book->shelves()->scopes('visible')->get();
 
         View::incrementFor($book);
-        if ($request->has('shelf')) {
+        if ($request->has('shelf'))
+        {
             $this->shelfContext->setShelfContext(intval($request->get('shelf')));
         }
 
         $this->setPageTitle($book->getShortName());
+
+
+        if (!auth()->user() && count($bookChildren) > 0)
+        {
+            if ($bookChildren->first()->isA('chapter'))
+            {
+                return redirect($bookChildren->first()->getUrl());
+            }
+        }
+
 
         return view('books.show', [
             'book'              => $book,
@@ -179,9 +194,12 @@ class BookController extends Controller
             'default_template_id' => ['nullable', 'integer'],
         ]);
 
-        if ($request->has('image_reset')) {
+        if ($request->has('image_reset'))
+        {
             $validated['image'] = null;
-        } elseif (array_key_exists('image', $validated) && is_null($validated['image'])) {
+        }
+        elseif (array_key_exists('image', $validated) && is_null($validated['image']))
+        {
             unset($validated['image']);
         }
 
@@ -245,7 +263,7 @@ class BookController extends Controller
         $this->checkOwnablePermission('book-view', $book);
         $this->checkPermission('book-create-all');
 
-        $newName = $request->get('name') ?: $book->name;
+        $newName  = $request->get('name') ?: $book->name;
         $bookCopy = $cloner->cloneBook($book, $newName);
         $this->showSuccessNotification(trans('entities.books_copy_success'));
 
